@@ -5,7 +5,6 @@ jQuery Slug is a powerful plugin that makes it easy to transform strings into sl
 
 Use
 ---
-
-  $('.slug_get').keyup(function() {
-    $('.slug_return').val($(this).slug());
-  });
+    $('.slug_get').keyup(function() {
+      $('.slug_return').val($(this).slug());
+    });
