@@ -5,12 +5,17 @@
       var slug = '';
       var text = null;
       
-      text = this.val();
+      if (this.is('input, select, textarea')) {
+        text = this.val();
+      } else {
+        text = this.text();
+      }
       text = jQuery.trim(text.toString());
       
       for (var i = 0; i < text.length; i ++) {
         slug += getChar(text.charCodeAt(i), '-');
       }
+
       
       slug = slug.toLowerCase();
       slug = slug.replace(new RegExp ('\-{2,}', 'gmi'), '-');
@@ -49,7 +54,7 @@
         chars['w'] = [87, 119];
         chars['x'] = [88, 120];
         chars['y'] = [89, 121, 221, 253, 255];
-        chars['z'] = [89, 122];
+        chars['z'] = [90, 122];
         chars['0'] = [48];
         chars['1'] = [49];
         chars['2'] = [50];
