@@ -1,81 +1,101 @@
-(function($) {
-  $.extend($.fn, {
-    slug: function() {
-      var self = this;
-      var slug = '';
-      var text = null;
-      
-      if (this.is('input, select, textarea')) {
-        text = this.val();
-      } else {
-        text = this.text();
-      }
-      text = jQuery.trim(text.toString());
-      
-      for (var i = 0; i < text.length; i ++) {
-        slug += getChar(text.charCodeAt(i), '-');
-      }
+/*
 
-      
-      slug = slug.toLowerCase();
-      slug = slug.replace(new RegExp ('\-{2,}', 'gmi'), '-');
-      
-      return slug;
-      
-      function getChar(charCode, returnDefault) {
+jQuery Slug 1.0
+===============
+
+jQuery Slug is a powerful plugin that makes it easy to transform strings into slugs.
+
+*/
+
+(function($) {
+    
+    // Default map of accented and special characters to ASCII characters
+    // credits: CakePHP
+    var transliteration = {
+        'ä|æ|ǽ': 'ae',
+        'ö|œ': 'oe',
+        'ü': 'ue',
+        'Ä': 'Ae',
+        'Ü': 'Ue',
+        'Ö': 'Oe',
+        'À|Á|Â|Ã|Ä|Å|Ǻ|Ā|Ă|Ą|Ǎ': 'A',
+        'à|á|â|ã|å|ǻ|ā|ă|ą|ǎ|ª': 'a',
+        'Ç|Ć|Ĉ|Ċ|Č': 'C',
+        'ç|ć|ĉ|ċ|č': 'c',
+        'Ð|Ď|Đ': 'D',
+        'ð|ď|đ': 'd',
+        'È|É|Ê|Ë|Ē|Ĕ|Ė|Ę|Ě': 'E',
+        'è|é|ê|ë|ē|ĕ|ė|ę|ě': 'e',
+        'Ĝ|Ğ|Ġ|Ģ': 'G',
+        'ĝ|ğ|ġ|ģ': 'g',
+        'Ĥ|Ħ': 'H',
+        'ĥ|ħ': 'h',
+        'Ì|Í|Î|Ï|Ĩ|Ī|Ĭ|Ǐ|Į|İ': 'I',
+        'ì|í|î|ï|ĩ|ī|ĭ|ǐ|į|ı': 'i',
+        'Ĵ': 'J',
+        'ĵ': 'j',
+        'Ķ': 'K',
+        'ķ': 'k',
+        'Ĺ|Ļ|Ľ|Ŀ|Ł': 'L',
+        'ĺ|ļ|ľ|ŀ|ł': 'l',
+        'Ñ|Ń|Ņ|Ň': 'N',
+        'ñ|ń|ņ|ň|ŉ': 'n',
+        'Ò|Ó|Ô|Õ|Ō|Ŏ|Ǒ|Ő|Ơ|Ø|Ǿ': 'O',
+        'ò|ó|ô|õ|ō|ŏ|ǒ|ő|ơ|ø|ǿ|º': 'o',
+        'Ŕ|Ŗ|Ř': 'R',
+        'ŕ|ŗ|ř': 'r',
+        'Ś|Ŝ|Ş|Š': 'S',
+        'ś|ŝ|ş|š|ſ': 's',
+        'Ţ|Ť|Ŧ': 'T',
+        'ţ|ť|ŧ': 't',
+        'Ù|Ú|Û|Ũ|Ū|Ŭ|Ů|Ű|Ų|Ư|Ǔ|Ǖ|Ǘ|Ǚ|Ǜ': 'U',
+        'ù|ú|û|ũ|ū|ŭ|ů|ű|ų|ư|ǔ|ǖ|ǘ|ǚ|ǜ': 'u',
+        'Ý|Ÿ|Ŷ': 'Y',
+        'ý|ÿ|ŷ': 'y',
+        'Ŵ': 'W',
+        'ŵ': 'w',
+        'Ź|Ż|Ž': 'Z',
+        'ź|ż|ž': 'z',
+        'Æ|Ǽ': 'AE',
+        'ß': 'ss',
+        'Ĳ': 'IJ',
+        'ĳ': 'ij',
+        'Œ': 'OE',
+        'ƒ': 'f'
+    };
+    
+    /**
+    * Returns a string with all spaces converted to underscores (by default), accented
+    * characters converted to non-accented characters, and non word characters removed.
+    * credits: CakePHP
+    */
+    $.slug = function(string, replacement, map) {
         
-        var chars = {};
+        if($.type(replacement) == 'undefined') {
+            replacement = '_';
+        } else if($.type(replacement) == 'object') {
+            map = replacement;
+            replacement = '_';
+        }
         
-        var returnChar = returnDefault;
+        if(!map) {
+            map = {};
+        }
         
+        map = $.extend({}, transliteration, map, {
+            "\\s+": replacement
+        });
         
-        chars['a'] = [65, 97, 170, 192, 193, 194, 195, 196, 197, 224, 225, 226, 227, 228, 229, 256, 257, 258, 259, 260];
-        chars['b'] = [66, 98, 223, 384, 385, 386, 387, 388, 389, 421];
-        chars['c'] = [67, 99, 169, 199, 231, 261, 262, 263, 264, 265, 266, 267, 268, 269];
-        chars['d'] = [68, 100, 208, 240, 270, 271, 272, 273, 393, 394, 395, 396];
-        chars['e'] = [69, 101, 8364, 200, 201, 202, 203, 232, 233, 234, 235, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 398, 399, 400, 440, 441, 442, 477, 494, 495];
-        chars['f'] = [70, 102, 401, 402];
-        chars['g'] = [71, 103, 284, 285, 286, 287, 288, 289, 290, 291, 403, 484, 485, 486, 487];
-        chars['h'] = [72, 104];
-        chars['i'] = [73, 105, 204, 205, 206, 207, 236, 237, 238, 239, 296, 297, 298, 299, 300, 301, 302, 303, 304, 463, 464];
-        chars['j'] = [74, 106];
-        chars['k'] = [75, 107];
-        chars['l'] = [76, 108];
-        chars['m'] = [77, 109];
-        chars['n'] = [78, 110, 241];
-        chars['o'] = [79, 111, 210, 211, 212, 213, 214, 240, 242, 243, 244, 245, 246];
-        chars['p'] = [80, 112];
-        chars['q'] = [81, 113];
-        chars['r'] = [82, 114];
-        chars['s'] = [83, 115];
-        chars['t'] = [84, 116];
-        chars['u'] = [85, 117, 217, 218, 219, 220, 249, 250, 251, 252];
-        chars['v'] = [86, 118];
-        chars['w'] = [87, 119];
-        chars['x'] = [88, 120];
-        chars['y'] = [89, 121, 221, 253, 255];
-        chars['z'] = [90, 122];
-        chars['0'] = [48];
-        chars['1'] = [49];
-        chars['2'] = [50];
-        chars['3'] = [51];
-        chars['4'] = [52];
-        chars['5'] = [53];
-        chars['6'] = [54];
-        chars['7'] = [55];
-        chars['8'] = [56];
-        chars['9'] = [57];
+        var slug = string;
+        $.each(map, function(index, value) {
+            var re = new RegExp(index, "g");
+            slug = slug.replace(re, value);
+        });
         
-        $.each(chars, function(digit, charCodes) {
-          if($.inArray(charCode, charCodes) > -1) {
-            returnChar = digit;
-            return;
-          }
-        })
+        return slug;
         
-        return returnChar;
-      }
-      
-    }
-  });
+    };
+    
+    // TODO: create method $.fn.slug
+    
 })(jQuery);
