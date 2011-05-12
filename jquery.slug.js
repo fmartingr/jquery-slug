@@ -96,6 +96,41 @@ jQuery Slug is a powerful plugin that makes it easy to transform strings into sl
         
     };
     
-    // TODO: create method $.fn.slug
+    
+    $.fn.slug = function(options) {
+        
+        var settings = $.extend({}, {
+            'target': false, //if false will return value
+            'event': 'keyup',
+            'replacement': '-',
+            'map': null
+        }, options);
+        
+        this.each(function() {
+            
+            var $this = $(this);
+            
+            var slug = $.slug($this.val(), settings.replacement, settings.map);
+            
+            $this.bind(settings.event, function() {
+                slug = $.slug($this.val(), settings.replacement, settings.map);
+                _setVal(settings.target, slug)
+            });
+            
+            _setVal(settings.target, slug)
+            
+        });
+        
+    }
+    
+    _setVal = function(target, value) {
+        if(target) {
+            if(target.attr('type')) {
+                target.val(value);
+            } else {
+                target.text(value);
+            }
+        }
+    }
     
 })(jQuery);
