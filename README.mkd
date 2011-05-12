@@ -9,3 +9,7 @@ Use
         slug = $.slug( $(this).val() );
         $('.slug_return').val(slug);
     });
+    
+    $("#example-input-field").slug({
+        'target': $('#slug')
+    });

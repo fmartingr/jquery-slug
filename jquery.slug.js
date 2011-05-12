@@ -100,7 +100,7 @@ jQuery Slug is a powerful plugin that makes it easy to transform strings into sl
     $.fn.slug = function(options) {
         
         var settings = $.extend({}, {
-            'target': false, //if false will return value
+            'target': false,
             'event': 'keyup',
             'replacement': '-',
             'map': null
