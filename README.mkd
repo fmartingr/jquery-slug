@@ -13,3 +13,8 @@ Use
     $("#example-input-field").slug({
         'target': $('#slug')
     });
+    
+    $("#example-1 input").slug(function(slug) {
+        var $this = this;
+        $this.next().text(slug);
+    });

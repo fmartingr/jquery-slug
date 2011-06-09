@@ -1,12 +1,11 @@
 /*
-
 jQuery Slug 1.0
 ===============
 
 jQuery Slug is a powerful plugin that makes it easy to transform strings into slugs.
 
 */
-
+DEBUG = null;
 (function($) {
     
     // Default map of accented and special characters to ASCII characters
@@ -100,36 +99,44 @@ jQuery Slug is a powerful plugin that makes it easy to transform strings into sl
     $.fn.slug = function(options) {
         
         var settings = $.extend({}, {
-            'target': false,
+            'target': null,
             'event': 'keyup',
             'replacement': '-',
-            'map': null
+            'map': null,
+            'callback': null
         }, options);
         
+        if($.type(options) == 'function') {
+            settings['callback'] = options;
+        }
+        
         this.each(function() {
-            
             var $this = $(this);
             
-            var slug = $.slug($this.val(), settings.replacement, settings.map);
-            
-            $this.bind(settings.event, function() {
-                slug = $.slug($this.val(), settings.replacement, settings.map);
-                _setVal(settings.target, slug)
+            $this.bind(settings['event'] + ' jquery-slug-bind', function() {
+                var val = $this.val();
+                
+                slug = $.slug(val, settings['replacement'], settings['map']);
+                if(settings['target']) {
+                    _setVal(settings['target'], slug);
+                }
+                
+                if(settings['callback']) {
+                    settings['callback'].apply($this, [slug, val]);
+                }
             });
             
-            _setVal(settings.target, slug)
+            $this.trigger('jquery-slug-bind');
             
         });
-        
     }
     
-    _setVal = function(target, value) {
-        if(target) {
-            if(target.attr('type')) {
-                target.val(value);
-            } else {
-                target.text(value);
-            }
+    var _setVal = function(target, value) {
+        var $target = $(target);
+        if($target.is(':input')) {
+            $target.val(value);
+        } else {
+            $target.text(value);
         }
     }
     
