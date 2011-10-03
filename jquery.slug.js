@@ -60,8 +60,7 @@ DEBUG = null;
         'Ĳ': 'IJ',
         'ĳ': 'ij',
         'Œ': 'OE',
-        'ƒ': 'f',
-        '[^a-zA-Z0-9-_]': ''
+        'ƒ': 'f'
     };
     
     /**
@@ -77,6 +76,8 @@ DEBUG = null;
             map = replacement;
             replacement = '_';
         }
+        
+        transliteration['[^a-zA-Z0-9]'] = replacement;
         
         if(!map) {
             map = {};
