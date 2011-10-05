@@ -60,7 +60,8 @@ DEBUG = null;
         'Ĳ': 'IJ',
         'ĳ': 'ij',
         'Œ': 'OE',
-        'ƒ': 'f'
+        'ƒ': 'f',
+        '[^a-zA-Z0-9 -_]': '',
     };
     
     /**
@@ -76,8 +77,6 @@ DEBUG = null;
             map = replacement;
             replacement = '_';
         }
-        
-        transliteration['[^a-zA-Z0-9]'] = replacement;
         
         if(!map) {
             map = {};
@@ -103,7 +102,7 @@ DEBUG = null;
         var settings = $.extend({}, {
             'target': null,
             'event': 'keyup',
-            'replacement': '-',
+            'replacement': '_',
             'map': null,
             'callback': null
         }, options);
